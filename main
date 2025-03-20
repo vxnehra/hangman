@@ -101,7 +101,7 @@ def start_game():
     attempts = 6  
     
     while attempts > 0:
-        print(hangman_stages[6 - attempts])  # display current hangman stage
+        print(hangman_stages[7 - attempts])  # display current hangman stage
         print("\nWord: " + " ".join(guessed_word))
         print(f"Remaining attempts: {attempts}")
         
