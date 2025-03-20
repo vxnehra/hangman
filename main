@@ -1,0 +1,148 @@
+import random
+
+# list of words for the hangman game
+word_list = ['python', 'hangman', 'developer', 'challenge', 'programming', 'function', 'college', 'everett', 'seattle','canvas',
+'java', 'boolean', 'bug', 'loop', 'string','function','debugging']
+
+# hangman stages 
+hangman_stages = [
+    '''
+     -----
+     |   |
+         |
+         |
+         |
+         |
+    -----|-----
+    ''',  # No hangman bodyparts
+
+    '''
+     -----
+     |   |
+     O   |
+         |
+         |
+         |
+    -----|-----
+    ''',  # head 
+
+    '''
+     -----
+     |   |
+     O   |
+     |   |
+         |
+         |
+    -----|-----
+    ''',  # chest
+
+    '''
+     -----
+     |   |
+     O   |
+    /|   |
+         |
+         |
+    -----|-----
+    ''',  # right arm
+
+    '''
+     -----
+     |   |
+     O   |
+    /|\  |
+         |
+         |
+    -----|-----
+    ''',  #left arm
+
+    '''
+     -----
+     |   |
+     O   |
+    /|\  |
+    /    |
+         |
+    -----|-----
+    ''',  #right leg
+
+    '''
+     -----
+     |   |
+     O   |
+    /|\  |
+    / \  |
+         |
+    -----|-----
+    '''   #left leg
+]
+
+# function loads score from file 
+def load_score(): #new
+    try: #error code without the try function if error jumps to except to return 0 for score
+        with open('score.txt', 'r') as file: # r = read mode 
+            return int(file.read())
+    except FileNotFoundError:
+        return 0  
+
+# function saves score to a file
+def save_score(score):#new
+    with open('score.txt', 'w') as file: # w = write 
+        file.write(str(score))
+
+# function to start game
+def start_game():
+    score = load_score()  
+    print(f"Welcome to Hangman! Your current score is: {score}")
+    
+    # selects a random word from the word list
+    word = random.choice(word_list)
+    guessed_word = ['_'] * len(word)  #track letters and adds the correct amount of '_' for each given word
+    attempts = 6  
+    
+    while attempts > 0:
+        print(hangman_stages[6 - attempts])  # display current hangman stage
+        print("\nWord: " + " ".join(guessed_word))
+        print(f"Remaining attempts: {attempts}")
+        
+        # ask the user for a letter in the word
+        guess = input("Enter a letter: ").lower()
+
+        if len(guess) != 1 or not guess.isalpha(): # guess.isalpha checks characters in word/string also this line of code checks that user only enters one letter
+            print("Invalid input! Please enter a single letter.")
+            continue
+
+        if guess in guessed_word: #checks to make sure you dont guess the same word twice
+            print(f"You've already guessed the letter '{guess}'.")
+            continue
+
+        # checks if guessed letter is in the word
+        if guess in word:
+            print(f"Good guess the letter '{guess}' is in the word.")
+            for i in range(len(word)):
+                if word[i] == guess:
+                    guessed_word[i] = guess #replaces the '_' with the word from users input
+        else:
+            print(f"Sorry the letter '{guess}' is not in the word.")
+            attempts -= 1
+        
+        # Checks if you didnt hang the man by guessing correctly does this by making sure there is not a left over '_'
+        if '_' not in guessed_word:
+            print(f"\nCongratulations you didn't hang the man You guessed the word: {word}")
+            score += 1  
+            save_score(score)  
+            break
+    else:
+        print(f"\nSorry, you've run out of attempts, you have hanged the man. The word was: {word}")
+        score -= 1  
+        save_score(score)  
+
+    print(f"Your final score is: {score}")
+
+# main program loop
+while True:
+    start_game()
+    play_again = input("\nWould you like to play again? (yes/no): ").lower()
+    if play_again != 'yes':
+        print("Thanks for playing!")
+        break
